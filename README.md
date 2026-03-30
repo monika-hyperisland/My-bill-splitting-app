@@ -53,6 +53,8 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+You can also view the live demo at [https://my-bill-splitting-app.vercel.app/](https://my-bill-splitting-app.vercel.app/).
+
 ## Available Scripts
 
 ### `npm start`
