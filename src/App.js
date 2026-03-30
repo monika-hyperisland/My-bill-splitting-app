@@ -1,0 +1,125 @@
+import { useEffect, useState } from "react";
+import {
+  getPeople,
+  addPerson,
+  deletePerson,
+  getExpenses,
+  addExpense,
+  updateExpense,
+  deleteExpense,
+} from "./services/api";
+
+import PersonForm from "./components/PersonForm";
+import PersonList from "./components/PersonList";
+import ExpenseForm from "./components/ExpenseForm";
+import ExpenseList from "./components/ExpenseList";
+import BalanceSummary from "./components/BalanceSummary";
+
+import "./App.css";
+
+export default function App() {
+  const [people, setPeople] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [feedback, setFeedback] = useState("");
+
+  useEffect(() => {
+    getPeople().then(setPeople);
+    getExpenses().then(setExpenses);
+  }, []);
+
+  function handleAddPerson(name) {
+    addPerson({ name }).then((newPerson) => {
+      setPeople((prev) => [...prev, newPerson]);
+      setFeedback("Person added");
+    });
+  }
+
+  function handleDeletePerson(id) {
+    const hasExpenses = expenses.some((e) => e.paidBy === id) ||  expenses.some((e) => e.sharedWith.includes(id));
+    if (hasExpenses) {
+      alert("Cannot delete person with expenses");
+      return;
+    }
+
+    deletePerson(id).then(() => {
+      setPeople((prev) => prev.filter((p) => p._id !== id));
+      setSelectedPerson(null);
+      setFeedback("Person deleted");
+    });
+  }
+
+  function handleAddExpense(expense) {
+    addExpense(expense).then((newExpense) => {
+      setExpenses((prev) => [...prev, newExpense]);
+      setFeedback("Expense added");
+    });
+  }
+
+  function handleUpdateExpense(updatedExpense) {
+    updateExpense(updatedExpense._id, updatedExpense).then(() => {
+      setExpenses((prev) =>
+        prev.map((e) =>
+          e._id === updatedExpense._id ? updatedExpense : e
+        )
+      );
+      setFeedback("Expense updated");
+    });
+  }
+
+  function handleDeleteExpense(id) {
+    deleteExpense(id).then(() => {
+      setExpenses((prev) => prev.filter((e) => e._id !== id));
+      setFeedback("Expense deleted");
+    });
+  }
+
+  const visibleExpenses = selectedPerson
+    ? expenses.filter((e) => e.paidBy === selectedPerson._id)
+    : expenses;
+
+  return (
+    <div className="app-container">
+      <h1>Expense Splitter</h1>
+
+      {feedback && <p className="feedback">{feedback}</p>}
+
+      <div className="main-layout">
+        <div className="panel">
+          <h2>People</h2>
+
+          <PersonForm onAdd={handleAddPerson} />
+
+          <PersonList
+            people={people}
+            expenses={expenses}
+            selectedPerson={selectedPerson}
+            onSelect={setSelectedPerson}
+            onDelete={handleDeletePerson}
+          />
+        </div>
+
+        <div className="panel">
+          <h2>Expenses</h2>
+        
+          <ExpenseForm
+            people={people}
+            onAdd={handleAddExpense}
+          />
+
+          <ExpenseList
+            expenses={visibleExpenses}
+            people={people}
+            onDelete={handleDeleteExpense}
+            onUpdate={handleUpdateExpense}
+          />
+
+          <BalanceSummary
+            people={people}
+            expenses={expenses}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
