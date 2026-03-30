@@ -28,6 +28,16 @@ export default function App() {
     getExpenses().then(setExpenses);
   }, []);
 
+  useEffect(() => {
+  if (!feedback) return;
+
+  const timer = setTimeout(() => {
+    setFeedback("");
+  }, 1000); 
+
+  return () => clearTimeout(timer);
+}, [feedback]);
+
   function handleAddPerson(name) {
     addPerson({ name }).then((newPerson) => {
       setPeople((prev) => [...prev, newPerson]);
