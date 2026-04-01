@@ -29,7 +29,6 @@ Expense Splitter helps groups manage shared spending by adding people, logging e
 
 
 ## Project Structure
-
 - `src/App.js` – main application layout, state management, and selection logic
 - `src/components/BalanceSummary.jsx` – balance summary display, highlights selected person
 - `src/components/ExpenseForm.jsx` – form for creating expenses with validation

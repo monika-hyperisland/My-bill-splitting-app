@@ -93,7 +93,7 @@ export default function ExpenseForm({ people, onAdd }) {
       <fieldset>
         <legend>Shared with</legend>
         {people.length === 0 ? (
-          <p className="info-message">Create people to choose sharing options.</p>
+          <p className="info-message">Add people to choose sharing options.</p>
         ) : (
           people.map((p) => (
             <label key={p._id} className="shared-with-item">
