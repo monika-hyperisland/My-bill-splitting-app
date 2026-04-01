@@ -81,6 +81,12 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## Live Demo
+
+You can use the deployed app here:
+
+[https://my-bill-splitting-app.vercel.app/](https://my-bill-splitting-app.vercel.app/)
+
 
 ## Available Scripts
 
@@ -102,7 +108,9 @@ Removes the Create React App build dependency and copies all configuration files
 
 
 ## Notes
+- You can view the app live at https://my-bill-splitting-app.vercel.app
 
-- This app currently runs entirely in the browser (no backend required)
-- You can extend it with persistence, backend storage, or user accounts
-- For distinction-level structure, see the modular components and utility files
+- The app uses a hosted REST endpoint (`crudcrud.com`) via `src/services/api.js`
+- Data persistence depends on the external endpoint token and may reset when the token expires
+
+- You can replace this with your own backend/API for stable long-term storage
