@@ -38,7 +38,6 @@ export function deleteExpense(id) {
 export function updateExpense(id, expense) {
     const { _id, ...expenseWithoutId } = expense;
 
-    console.log(expense)
   return fetch(`${Base_URL}/expenses/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

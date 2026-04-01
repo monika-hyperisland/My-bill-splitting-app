@@ -46,7 +46,10 @@ export default function App() {
   }
 
   function handleDeletePerson(id) {
-    const hasExpenses = expenses.some((e) => e.paidBy === id) ||  expenses.some((e) => e.sharedWith.includes(id));
+    const hasExpenses = expenses.some((e) => {
+      const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
+      return e.paidBy === id || sharedWith.includes(id);
+    });
     if (hasExpenses) {
       alert("Cannot delete person with expenses");
       return;
@@ -85,7 +88,10 @@ export default function App() {
   }
 
   const visibleExpenses = selectedPerson
-    ? expenses.filter((e) => e.paidBy === selectedPerson._id)
+    ? expenses.filter((e) => {
+        const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
+        return e.paidBy === selectedPerson || sharedWith.includes(selectedPerson);
+      })
     : expenses;
 
   return (

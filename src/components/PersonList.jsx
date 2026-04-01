@@ -1,13 +1,17 @@
+
 export default function PersonList({ people, expenses, selectedPerson, onSelect, onDelete }) {
   return (
     <div className="person-list">
       {people.map((p) => {
-        const hasExpenses = expenses.some((e) => e.paidBy === p.name);
+        const hasExpenses = expenses.some((e) => {
+          const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
+          return e.paidBy === p._id || sharedWith.includes(p._id);
+        });
         return (
           <div key={p._id} className="person-item">
-            <button className="addedPerson"
-               const Name={selectedPerson === p.name ? "selected" : ""}
-              onClick={() => onSelect(selectedPerson === p.name ? null : p.name)}
+            <button
+              className={`addedPerson ${selectedPerson === p._id ? "selected" : ""}`}
+              onClick={() => onSelect(selectedPerson === p._id ? null : p._id)}
             >
               {p.name}
             </button>
@@ -17,7 +21,7 @@ export default function PersonList({ people, expenses, selectedPerson, onSelect,
                 onClick={() => onDelete(p._id)}
                 title="Delete person"
               >
-                <>Delete</>
+                Delete
               </button>
             )}
           </div>

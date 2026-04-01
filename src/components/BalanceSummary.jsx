@@ -6,9 +6,12 @@ export default function BalanceSummary({ people, expenses }) {
   });
 
   expenses.forEach((exp) => {
-    const splitAmount = exp.amount / exp.sharedWith.length;
+    const sharedWith = Array.isArray(exp.sharedWith) ? exp.sharedWith : [];
+    if (sharedWith.length === 0) return;
 
-    exp.sharedWith.forEach((personId) => {
+    const splitAmount = exp.amount / sharedWith.length;
+
+    sharedWith.forEach((personId) => {
       if (personId === exp.paidBy) {
         balances[personId] += exp.amount - splitAmount;
       } else {
