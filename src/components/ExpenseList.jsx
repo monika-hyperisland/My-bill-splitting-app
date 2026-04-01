@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import ExpenseEditForm from "./ExpenseEditForm";
+import EmptyState from "./EmptyState";
 
 export default function ExpenseList({
   expenses,
@@ -22,24 +23,27 @@ export default function ExpenseList({
   return (
     <div>
       <h3>Pending Payment</h3>
-      {expenses.length === 0 && <p>No expenses yet</p>}
-      {expenses.map((expense) =>
-        editingExpenseId === expense._id ? (
-          <ExpenseEditForm
-            key={expense._id}
-            expense={expense}
-            people={people}
-            onSave={saveEdit}
-            onCancel={() => setEditingExpenseId(null)}
-          />
-        ) : (
-          <ExpenseItem
-            key={expense._id}
-            expense={expense}
-            people={people}
-            onDelete={onDelete}
-            onEdit={startEdit}
-          />
+      {expenses.length === 0 ? (
+        <EmptyState message="No expenses yet." />
+      ) : (
+        expenses.map((expense) =>
+          editingExpenseId === expense._id ? (
+            <ExpenseEditForm
+              key={expense._id}
+              expense={expense}
+              people={people}
+              onSave={saveEdit}
+              onCancel={() => setEditingExpenseId(null)}
+            />
+          ) : (
+            <ExpenseItem
+              key={expense._id}
+              expense={expense}
+              people={people}
+              onDelete={onDelete}
+              onEdit={startEdit}
+            />
+          )
         )
       )}
     </div>

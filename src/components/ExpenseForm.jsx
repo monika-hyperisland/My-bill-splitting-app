@@ -5,6 +5,7 @@ export default function ExpenseForm({ people, onAdd }) {
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
   const [sharedWith, setSharedWith] = useState([]);
+  const [error, setError] = useState("");
 
   function toggleShare(personId) {
     setSharedWith((prev) =>
@@ -16,14 +17,30 @@ export default function ExpenseForm({ people, onAdd }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setError("");
 
-    if (!description || !amount || !paidBy || sharedWith.length === 0) {
-      alert("All fields are required");
+    if (!description.trim()) {
+      setError("Please enter a description.");
+      return;
+    }
+
+    if (!amount || Number(amount) <= 0) {
+      setError("Please enter a valid expense amount.");
+      return;
+    }
+
+    if (!paidBy) {
+      setError("Please choose who paid the expense.");
+      return;
+    }
+
+    if (sharedWith.length === 0) {
+      setError("Please select at least one person who shares this expense.");
       return;
     }
 
     onAdd({
-      description,
+      description: description.trim(),
       amount: Number(amount),
       paidBy,
       sharedWith,
@@ -35,14 +52,21 @@ export default function ExpenseForm({ people, onAdd }) {
     setSharedWith([]);
   }
 
+  const hasPeople = people.length > 0;
+
   return (
-    <form className="expense-form" onSubmit={handleSubmit} >
+    <form className="expense-form" onSubmit={handleSubmit}>
       <h3>Add Expense</h3>
+
+      {!hasPeople && (
+        <p className="info-message">Add at least one person before recording expenses.</p>
+      )}
 
       <input
         placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        disabled={!hasPeople}
       />
 
       <input
@@ -50,11 +74,13 @@ export default function ExpenseForm({ people, onAdd }) {
         placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        disabled={!hasPeople}
       />
 
       <select
         value={paidBy}
         onChange={(e) => setPaidBy(e.target.value)}
+        disabled={!hasPeople}
       >
         <option value="">Paid by...</option>
         {people.map((p) => (
@@ -66,19 +92,26 @@ export default function ExpenseForm({ people, onAdd }) {
 
       <fieldset>
         <legend>Shared with</legend>
-        {people.map((p) => (
-          <label key={p._id} className ="shared-with-item">
-            <input
-              type="checkbox"
-              checked={sharedWith.includes(p._id)}
-              onChange={() => toggleShare(p._id)}
-            />
-            <span>{p.name}</span>
-          </label>
-        ))}
+        {people.length === 0 ? (
+          <p className="info-message">Create people to choose sharing options.</p>
+        ) : (
+          people.map((p) => (
+            <label key={p._id} className="shared-with-item">
+              <input
+                type="checkbox"
+                checked={sharedWith.includes(p._id)}
+                onChange={() => toggleShare(p._id)}
+              />
+              <span>{p.name}</span>
+            </label>
+          ))
+        )}
       </fieldset>
 
-      <button type="submit">Add Expense</button>
+      {error && <p className="error-message">{error}</p>}
+      <button type="submit" disabled={!hasPeople}>
+        Add Expense
+      </button>
     </form>
   );
 }

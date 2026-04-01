@@ -67,6 +67,12 @@ h1, h2, h3 {
   margin: 6px 0;
 }
 
+.selected-balance {
+  border-left: 4px solid #3370b0;
+  padding-left: 10px;
+  background: #e8f0ff;
+}
+
 .panel input,
 .panel select {
   background: #ffffff;
@@ -78,6 +84,30 @@ h1, h2, h3 {
 .panel select:focus {
   outline: none;
   border-color: #3370b0;
+}
+
+.error-message {
+  color: #c62828;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.info-message {
+  color: #374151;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.empty-state {
+  color: #6b7280;
+  margin: 16px 0;
+  font-style: italic;
+}
+
+button:disabled,
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .shared-with-item {

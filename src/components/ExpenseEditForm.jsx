@@ -7,6 +7,7 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
     paidBy: "",
     sharedWith: [],
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setForm({
@@ -15,6 +16,7 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
       paidBy: expense.paidBy,
       sharedWith: Array.isArray(expense.sharedWith) ? expense.sharedWith : [],
     });
+    setError("");
   }, [expense]);
 
   function toggleShare(personId) {
@@ -27,9 +29,31 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
   }
 
   function handleSave() {
+    setError("");
+
+    if (!form.description.trim()) {
+      setError("Please enter a description.");
+      return;
+    }
+
+    if (!form.amount || Number(form.amount) <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
+
+    if (!form.paidBy) {
+      setError("Please select who paid the expense.");
+      return;
+    }
+
+    if (form.sharedWith.length === 0) {
+      setError("Please select at least one shared person.");
+      return;
+    }
+
     onSave({
       ...expense,
-      description: form.description,
+      description: form.description.trim(),
       amount: Number(form.amount),
       paidBy: form.paidBy,
       sharedWith: form.sharedWith,
@@ -71,6 +95,7 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
           </label>
         ))}
       </fieldset>
+      {error && <p className="error-message">{error}</p>}
       <button onClick={handleSave}>Save</button>
       <button onClick={onCancel}>Cancel</button>
     </div>

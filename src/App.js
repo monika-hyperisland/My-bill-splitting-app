@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getPeople,
   addPerson,
@@ -22,6 +22,7 @@ export default function App() {
   const [expenses, setExpenses] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const balanceRef = useRef(null);
 
   useEffect(() => {
     getPeople().then(setPeople);
@@ -51,7 +52,7 @@ export default function App() {
       return e.paidBy === id || sharedWith.includes(id);
     });
     if (hasExpenses) {
-      alert("Cannot delete person with expenses");
+      setFeedback("Cannot delete person with expenses");
       return;
     }
 
@@ -87,12 +88,22 @@ export default function App() {
     });
   }
 
-  const visibleExpenses = selectedPerson
-    ? expenses.filter((e) => {
-        const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
-        return e.paidBy === selectedPerson || sharedWith.includes(selectedPerson);
-      })
-    : expenses;
+  const visibleExpenses = useMemo(
+    () =>
+      selectedPerson
+        ? expenses.filter((e) => {
+            const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
+            return e.paidBy === selectedPerson || sharedWith.includes(selectedPerson);
+          })
+        : expenses,
+    [selectedPerson, expenses]
+  );
+
+  useEffect(() => {
+    if (selectedPerson && balanceRef.current) {
+      balanceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedPerson]);
 
   return (
     <div className="app-container">
@@ -130,10 +141,13 @@ export default function App() {
             onUpdate={handleUpdateExpense}
           />
 
-          <BalanceSummary
-            people={people}
-            expenses={expenses}
-          />
+          <div ref={balanceRef}>
+            <BalanceSummary
+              people={people}
+              expenses={expenses}
+              selectedPerson={selectedPerson}
+            />
+          </div>
         </div>
       </div>
     </div>

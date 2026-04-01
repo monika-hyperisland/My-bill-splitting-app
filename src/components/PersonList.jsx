@@ -1,32 +1,37 @@
+import EmptyState from "./EmptyState";
 
 export default function PersonList({ people, expenses, selectedPerson, onSelect, onDelete }) {
   return (
     <div className="person-list">
-      {people.map((p) => {
-        const hasExpenses = expenses.some((e) => {
-          const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
-          return e.paidBy === p._id || sharedWith.includes(p._id);
-        });
-        return (
-          <div key={p._id} className="person-item">
-            <button
-              className={`addedPerson ${selectedPerson === p._id ? "selected" : ""}`}
-              onClick={() => onSelect(selectedPerson === p._id ? null : p._id)}
-            >
-              {p.name}
-            </button>
-            {!hasExpenses && (
+      {people.length === 0 ? (
+        <EmptyState message="No people added yet." />
+      ) : (
+        people.map((p) => {
+          const hasExpenses = expenses.some((e) => {
+            const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
+            return e.paidBy === p._id || sharedWith.includes(p._id);
+          });
+          return (
+            <div key={p._id} className="person-item">
               <button
-                className="delete-person"
-                onClick={() => onDelete(p._id)}
-                title="Delete person"
+                className={`addedPerson ${selectedPerson === p._id ? "selected" : ""}`}
+                onClick={() => onSelect(selectedPerson === p._id ? null : p._id)}
               >
-                Delete
+                {p.name}
               </button>
-            )}
-          </div>
-        );
-      })}
+              {!hasExpenses && (
+                <button
+                  className="delete-person"
+                  onClick={() => onDelete(p._id)}
+                  title="Delete person"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
