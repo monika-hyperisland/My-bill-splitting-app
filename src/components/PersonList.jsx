@@ -1,6 +1,14 @@
 import EmptyState from "./EmptyState";
 
-export default function PersonList({ people, expenses, selectedPerson, onSelect, onDelete }) {
+// REVIEW: The hasExpenses logic (lines 10-13) is duplicated from App.js handleDeletePerson.
+// If the condition changes, both places must stay in sync. Consider a shared helper function.
+export default function PersonList({
+  people,
+  expenses,
+  selectedPerson,
+  onSelect,
+  onDelete,
+}) {
   return (
     <div className="person-list">
       {people.length === 0 ? (
@@ -15,7 +23,9 @@ export default function PersonList({ people, expenses, selectedPerson, onSelect,
             <div key={p._id} className="person-item">
               <button
                 className={`addedPerson ${selectedPerson === p._id ? "selected" : ""}`}
-                onClick={() => onSelect(selectedPerson === p._id ? null : p._id)}
+                onClick={() =>
+                  onSelect(selectedPerson === p._id ? null : p._id)
+                }
               >
                 {p.name}
               </button>

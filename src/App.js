@@ -24,20 +24,26 @@ export default function App() {
   const [feedback, setFeedback] = useState("");
   const balanceRef = useRef(null);
 
+  // REVIEW: No .catch() on any API call in this component. If the backend is unreachable or
+  // returns an error, failures are silently swallowed and the user sees no feedback.
+  // REVIEW: No loading state — the UI renders immediately with empty arrays, giving no indication
+  // that data is still being fetched.
   useEffect(() => {
     getPeople().then(setPeople);
     getExpenses().then(setExpenses);
   }, []);
 
+  // REVIEW: Inconsistent indentation — this useEffect body is not indented to match the rest of the
+  // component (missing 2-space indent for the inner block).
   useEffect(() => {
-  if (!feedback) return;
+    if (!feedback) return;
 
-  const timer = setTimeout(() => {
-    setFeedback("");
-  }, 1000); 
+    const timer = setTimeout(() => {
+      setFeedback("");
+    }, 1000);
 
-  return () => clearTimeout(timer);
-}, [feedback]);
+    return () => clearTimeout(timer);
+  }, [feedback]);
 
   function handleAddPerson(name) {
     addPerson({ name }).then((newPerson) => {
@@ -46,6 +52,8 @@ export default function App() {
     });
   }
 
+  // REVIEW: The hasExpenses check is duplicated here and in PersonList.jsx. If the logic changes,
+  // both locations must be updated. Extract this into a shared utility or keep it in one place only.
   function handleDeletePerson(id) {
     const hasExpenses = expenses.some((e) => {
       const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
@@ -70,12 +78,13 @@ export default function App() {
     });
   }
 
+  // REVIEW: After updateExpense(), the local state is set from the object passed by the client,
+  // not the server response. If the server modifies or rejects fields, the UI will be out of sync.
+  // Use the server's response body instead.
   function handleUpdateExpense(updatedExpense) {
     updateExpense(updatedExpense._id, updatedExpense).then(() => {
       setExpenses((prev) =>
-        prev.map((e) =>
-          e._id === updatedExpense._id ? updatedExpense : e
-        )
+        prev.map((e) => (e._id === updatedExpense._id ? updatedExpense : e)),
       );
       setFeedback("Expense updated");
     });
@@ -93,10 +102,12 @@ export default function App() {
       selectedPerson
         ? expenses.filter((e) => {
             const sharedWith = Array.isArray(e.sharedWith) ? e.sharedWith : [];
-            return e.paidBy === selectedPerson || sharedWith.includes(selectedPerson);
+            return (
+              e.paidBy === selectedPerson || sharedWith.includes(selectedPerson)
+            );
           })
         : expenses,
-    [selectedPerson, expenses]
+    [selectedPerson, expenses],
   );
 
   useEffect(() => {
@@ -128,11 +139,8 @@ export default function App() {
 
         <div className="panel">
           <h2>Expenses</h2>
-        
-          <ExpenseForm
-            people={people}
-            onAdd={handleAddExpense}
-          />
+
+          <ExpenseForm people={people} onAdd={handleAddExpense} />
 
           <ExpenseList
             expenses={visibleExpenses}

@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+// REVIEW: No duplicate name validation — users can add multiple people with the same name,
+// which will cause confusion in dropdowns and balance displays.
+// REVIEW: No max-length constraint on the name input. Very long names will break the layout.
 export default function PersonForm({ onAdd }) {
   const [name, setName] = useState("");
 
