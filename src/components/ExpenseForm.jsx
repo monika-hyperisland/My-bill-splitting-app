@@ -11,7 +11,7 @@ export default function ExpenseForm({ people, onAdd }) {
     setSharedWith((prev) =>
       prev.includes(personId)
         ? prev.filter((id) => id !== personId)
-        : [...prev, personId]
+        : [...prev, personId],
     );
   }
 
@@ -59,7 +59,9 @@ export default function ExpenseForm({ people, onAdd }) {
       <h3>Add Expense</h3>
 
       {!hasPeople && (
-        <p className="info-message">Add at least one person before recording expenses.</p>
+        <p className="info-message">
+          Add at least one person before recording expenses.
+        </p>
       )}
 
       <input
@@ -69,6 +71,8 @@ export default function ExpenseForm({ people, onAdd }) {
         disabled={!hasPeople}
       />
 
+      {/* REVIEW: The number input allows typing negative values. Add min="0.01" and step="0.01"
+          to prevent invalid amounts at the HTML level, not just on submit. */}
       <input
         type="number"
         placeholder="Amount"
@@ -90,6 +94,9 @@ export default function ExpenseForm({ people, onAdd }) {
         ))}
       </select>
 
+      {/* REVIEW: There's no guidance about whether the payer should also be checked in "Shared with".
+          If the payer is not included, the split calculation in calculateBalances won't credit them,
+          leading to incorrect balances. Consider auto-including the payer or adding a hint. */}
       <fieldset>
         <legend>Shared with</legend>
         {people.length === 0 ? (

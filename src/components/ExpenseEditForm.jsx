@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+// REVIEW: This edit form uses a plain <div> instead of a <form> element, so pressing Enter
+// won't submit. Wrap the content in a <form> with onSubmit for consistent UX with ExpenseForm.
 export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
   const [form, setForm] = useState({
     description: "",
@@ -62,10 +64,14 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
 
   return (
     <div className="expense-card">
+      {/* REVIEW: Missing placeholder attributes on both inputs — the user has no hint about what
+          to type, unlike the ExpenseForm which has placeholders. */}
       <input
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
+      {/* REVIEW: No min attribute on the number input. Add min="0.01" step="0.01" to match
+          the validation logic in handleSave and prevent negative amounts at the input level. */}
       <input
         type="number"
         value={form.amount}
@@ -97,6 +103,8 @@ export default function ExpenseEditForm({ expense, people, onSave, onCancel }) {
       </fieldset>
       {error && <p className="error-message">{error}</p>}
       <button onClick={handleSave}>Save</button>
+      {/* REVIEW: Cancel button should have type="button" to prevent accidental form submission
+          if this is ever wrapped in a <form> element. */}
       <button onClick={onCancel}>Cancel</button>
     </div>
   );

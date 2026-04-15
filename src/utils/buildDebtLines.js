@@ -1,3 +1,5 @@
+// REVIEW: If expense.sharedWith is an empty array (passes the Array.isArray check),
+// dividing by .length produces Infinity. Add a guard for sharedWith.length === 0.
 export default function buildDebtLines(expense, people) {
   const paidByPerson = people.find((person) => person._id === expense.paidBy);
   if (!paidByPerson || !Array.isArray(expense.sharedWith)) return [];
